@@ -1,0 +1,48 @@
+pipeline {
+ agent {
+    node {
+      label 'go'
+    }
+  }
+
+//     parameters {
+//         string(name:'TAG_NAME',defaultValue: '',description:'')
+//     }
+
+    environment {
+        REGISTRY = 'registry.cn-beijing.aliyuncs.com/pox'
+        APP_NAME = 'bridge'
+    }
+
+  stages {
+    stage('check out from git') {
+      steps {
+        git(url: 'http://git.everylink.ai/blockchain/chainbridge.git',credentialsId: 'kevin', changelog: true, poll: false)
+      }
+    }
+    stage('build & push') {
+      steps {
+         container("go"){
+          withCredentials([usernamePassword(passwordVariable : 'DOCKER_PASSWORD' ,credentialsId : 'dockerhub' ,usernameVariable : 'DOCKER_USERNAME' ,)]) {
+            sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
+            sh 'docker build -f Dockerfile -t $REGISTRY/$APP_NAME:SNAPSHOT-$BUILD_NUMBER .'
+            sh 'docker push $REGISTRY/$APP_NAME:SNAPSHOT-$BUILD_NUMBER'
+          }
+         }
+      }
+    }
+    stage('deploy to sandbox') {
+      steps {
+        kubernetesDeploy(enableConfigSubstitution: true, deleteResource: false, configs: 'deploy/test/**', kubeconfigId: 'kubeconfig')
+      }
+    }
+
+//     stage('deploy to production') {
+//        steps {
+//          input(message: 'Waiting for audit @eric  ', submitter: 'eric,admin')
+//          kubernetesDeploy(enableConfigSubstitution: true, deleteResource: false, configs: 'substrate-node-template/deploy/prd-testing/**', kubeconfigId: 'kubeconfig-prd')
+//        }
+//      }
+
+  }
+}

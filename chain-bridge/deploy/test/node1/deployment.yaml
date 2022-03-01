@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $APP_NAME-node-1-sandbox
+  namespace: chain-sandbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $APP_NAME-node-1-sandbox
+  template:
+    metadata:
+      labels:
+        app: $APP_NAME-node-1-sandbox
+    spec:
+      containers:
+      - name: $APP_NAME-node-1-sandbox
+        command: [ "/bin/bash" ]
+        args: [ "-c","./bridge --config /home/config/config1.json --verbosity trace --latest" ]
+        image:  $REGISTRY/$APP_NAME:SNAPSHOT-$BUILD_NUMBER
+        resources:
+          requests:
+            cpu: 0.1
+            memory: 0.5Gi
+          limits:
+            cpu: 2
+            memory: 1Gi
+        volumeMounts:
+        - name: host-time
+          mountPath: /etc/localtime
+        - name: config
+          mountPath: /home/config
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: "spring.profiles.active"
+            value: "test"
+          - name: TZ
+            value: GMT
+          - name: KEYSTORE_PASSWORD
+            value: 123456
+      volumes:
+      - name: host-time
+        hostPath:
+          path: /etc/localtime
+      - name: config
+        configMap:
+          name: chain-bridge-test-config
+          items:
+            - key: test1.config.json
+              path: config1.json
+      imagePullSecrets:
+      - name: regcred
+      restartPolicy: Always
+      dnsPolicy: ClusterFirst
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - $APP_NAME-node-0-production
+                      - $APP_NAME-node-1-production
+              topologyKey: "kubernetes.io/hostname"
+  strategy:
+    type: Recreate

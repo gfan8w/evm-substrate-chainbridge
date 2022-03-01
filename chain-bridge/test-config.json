@@ -1,0 +1,32 @@
+{
+  "chains": [
+    {
+      "name": "vmchain",
+      "type": "ethereum",
+      "id": "113",
+      "endpoint": "wss://goerli.infura.io/ws/v3/7307908c50f44d578fd7470e6df7921e",
+      "from": "0x61C993939B366BCaadADBd2Fc13668980e086Da3",
+      "opts": {
+        "bridge": "0x2601cd4679FCb02247Ae226BAcF61e591445d3Ca",
+        "erc20Handler": "0x74afF95A7053a215bBf6c3eE7CF9B5428dBaCbFE",
+        "genericHandler": "",
+        "gasLimit": "1000000",
+        "maxGasPrice": "10000000000"
+      }
+    },
+    {
+      "name": "Rinkeby",
+      "type": "ethereum",
+      "id": "1",
+      "endpoint": "wss://rinkeby.infura.io/ws/v3/7307908c50f44d578fd7470e6df7921e",
+      "from": "0x61C993939B366BCaadADBd2Fc13668980e086Da3",
+      "opts": {
+        "bridge": "0xeA309bA49f91191d1e57135EFb2586fA7B18D7ec",
+        "erc20Handler": "0x6261834C9a50336e8AF62e8320D31e68614df8Ff",
+        "genericHandler": "",
+        "gasLimit": "1000000",
+        "maxGasPrice": "10000000000"
+      }
+    }
+  ]
+}
