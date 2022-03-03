@@ -1,0 +1,30 @@
+# Copyright 2020 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+
+FROM  golang:1.13-stretch AS builder
+ADD . /src
+WORKDIR /src
+RUN go env -w GO111MODULE=on
+RUN go env -w GOPROXY=https://goproxy.cn,https://goproxy.io,direct
+RUN go mod download
+RUN cd cmd/chainbridge && go build -o /bridge .
+COPY ./keys /keys
+COPY ./ca  /ca
+
+# # final stage
+FROM debian:stretch-slim
+RUN apt-get -y update && apt-get -y upgrade  && apt-get install --assume-yes apt-utils
+RUN apt-get install ca-certificates wget -y
+RUN mkdir /usr/local/share/ca-certificates/bridge
+COPY --from=builder /ca /usr/local/share/ca-certificates/bridge/
+COPY --from=builder /ca /etc/ssl/certs/
+RUN  echo 'bridge/ca.cer'>>/etc/ca-certificates.conf && echo 'bridge/vmchain.cer'>>/etc/ca-certificates.conf && update-ca-certificates
+COPY --from=builder /bridge ./
+COPY --from=builder /keys ./keys
+RUN chmod +x ./bridge
+
+
+FROM scratch AS export-stage
+COPY --from=builder /bridge .
+# DOCKER_BUILDKIT=1 docker build --file Dockerfile.build --output out .
+# there will be a bridge exe file in the ./out folder

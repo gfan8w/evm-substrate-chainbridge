@@ -1,0 +1,34 @@
+{
+  "chains": [
+    {
+      "name": "Ropsten",
+      "type": "ethereum",
+      "id": "10",
+      "endpoint": "wss://ropsten.infura.io/ws/v3/5a4368b93922493ea7d9a9ee0f19a445",
+      "from": "0x9ea356d25c658A648f408ABE2322F2f01F12A0F0",
+      "opts": {
+        "bridge": "0x25c4A74B8b0892101cA0BB65a12bA0fc1FE1BbC8",
+        "erc20Handler": "0x0772eB93d3BA7CCf46AD4e73Ba7ae25bCc600820",
+        "erc721Handler": "0x38162C9952C0f9006B43Dc9399c66Db005441487",
+        "genericHandler": "0x0772eB93d3BA7CCf46AD4e73Ba7ae25bCc600820",
+        "gasLimit": "1000000",
+        "maxGasPrice": "10000000000"
+      }
+    },
+    {
+      "name": "Local",
+      "type": "ethereum",
+      "id": "0",
+      "endpoint": "ws://123.58.217.221:9954",
+      "from": "0xFb07a28508F195bEaAc1ac621E2A3c2849Fd5143",
+      "opts": {
+        "bridge": "0xEAE3c71AD316c72867F9208f2d62d2E24fcC3AB2",
+        "erc20Handler": "0x447f558fe97F2985ed4f9Aa270Ff08C556C75B27",
+        "erc721Handler": "0xA756e79B7b75A6CC0427c7D33C6CE250c7855131",
+        "genericHandler": "0x447f558fe97F2985ed4f9Aa270Ff08C556C75B27",
+        "gasLimit": "1000000",
+        "maxGasPrice": "10000000000"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+# Copyright 2020 ChainSafe Systems
+# SPDX-License-Identifier: LGPL-3.0-only
+
+FROM debian:stretch-slim
+ENV TZ=Asia/Shanghai
+RUN apt-get -y update && apt-get -y upgrade  && apt-get install --assume-yes apt-utils
+RUN apt-get install ca-certificates wget -y
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN mkdir /usr/local/share/ca-certificates/bridge
+COPY ./ca /usr/local/share/ca-certificates/bridge/
+COPY ./ca /etc/ssl/certs/
+RUN  echo 'bridge/ca.cer'>>/etc/ca-certificates.conf && echo 'bridge/vmchain.cer'>>/etc/ca-certificates.conf && update-ca-certificates
+VOLUME /app
+WORKDIR /app
+COPY ./bridge ./
+COPY ./entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
+
+ENTRYPOINT ["/bin/bash", "-c", "./entrypoint.sh"]
+

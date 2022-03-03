@@ -1,0 +1,35 @@
+# ccm chain-bridge
+# docker-compose -p ethccm-bridge up -d --build
+# docker-compose  -p ethccm-bridge up --build -d bridge1
+
+version: '3'
+services:
+  bridge1:
+    build:
+      context: .
+      dockerfile: Dockerfile.deploy
+    container_name: bridge1
+    hostname: bridge1
+    environment:
+      - KEYSTORE_PASSWORD=password
+    volumes:
+      - ./bridge1/logs:/app/logs
+      - ./bridge1/block:/app/blockstore
+      - ./config:/app/config:ro
+    network_mode: host
+    restart: on-failure:5
+
+  bridge2:
+    build:
+      context: .
+      dockerfile: Dockerfile.deploy
+    container_name: bridge2
+    hostname: bridge2
+    environment:
+      - KEYSTORE_PASSWORD=password
+    volumes:
+      - ./bridge2/logs:/app/logs
+      - ./bridge2/block:/app/blockstore
+      - ./config:/app/config:ro
+    network_mode: host
+    restart: on-failure:5
